@@ -1,7 +1,15 @@
 import database.db as db
 from datetime import datetime
 from sqlalchemy import extract
+from models.Administrador import Administrador
 
+#########################################################
+def insert_admins():
+    Administrador(1528370599)#Marco Montoya
+    Administrador(0)#Alejandra Peralta
+    Administrador(00)#Jose Omar Cardona
+    Administrador(000)#Cristian Ruiz
+    return True
 #########################################################
 def get_about_this(VERSION):
     response = (
