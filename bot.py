@@ -43,3 +43,21 @@ def on_command_about(message):
     logic.get_about_this(config.VERSION), parse_mode="Markdown")
 
 #########################################################
+# Default cuando se ingresa un valor invalido:
+@bot.message_handler(func=lambda message: True)
+def on_fallback(message):
+    bot.send_chat_action(message.chat.id, 'typing')
+    sleep(1)
+    
+    response = logic.get_fallback_message(message.text)
+    bot.reply_to(message, response)
+
+    bot.send_message(
+        message.chat.id,
+        logic.get_help_message(),
+        parse_mode="Markdown")
+        
+########################################################
+if __name__ == '__main__':
+    bot.polling(timeout=20)
+#########################################################

@@ -6,9 +6,9 @@ from models.Administrador import Administrador
 #########################################################
 def insert_admins():
     Administrador(1528370599)#Marco Montoya
-    Administrador(1221493315)#Alejandra Peralta
+    Administrador(0)#Alejandra Peralta
     Administrador(1551638159)#Jose Omar Cardona
-    Administrador(1563918474)#Cristian Ruiz
+    Administrador(000)#Cristian Ruiz
     return True
 #########################################################
 def get_about_this(VERSION):
@@ -54,6 +54,11 @@ def get_help_message ():
     "*registrar salida|salida|rsal {placa}* - Registrar Salida Vehículo\n"
     "*ubicar vehiculo|ubicar|ubv {placa}* - Ubicar Vehículo\n"
     )
+    return response
+
+#########################################################
+def get_fallback_message (text):
+    response = f"\U0001F648 No entendí lo que me acabas de decir"  
     return response
 
 #########################################################

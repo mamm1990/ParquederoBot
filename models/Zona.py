@@ -1,5 +1,4 @@
 import datetime
-
 from sqlalchemy.sql.functions import func
 import database.db as db
 from sqlalchemy import Column, Integer, String, Float, Boolean
