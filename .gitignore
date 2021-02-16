@@ -1,3 +1,7 @@
+# Determina el nivel de los mensajes que se van a mostrar (debug)
+telebot.logger.setLevel(logging.INFO)
+#########################################################
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
