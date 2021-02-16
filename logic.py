@@ -6,9 +6,9 @@ from models.Administrador import Administrador
 #########################################################
 def insert_admins():
     Administrador(1528370599)#Marco Montoya
-    Administrador(0)#Alejandra Peralta
-    Administrador(00)#Jose Omar Cardona
-    Administrador(000)#Cristian Ruiz
+    Administrador(1221493315)#Alejandra Peralta
+    Administrador(1551638159)#Jose Omar Cardona
+    Administrador(1563918474)#Cristian Ruiz
     return True
 #########################################################
 def get_about_this(VERSION):
