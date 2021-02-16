@@ -1,3 +1,4 @@
+#importa la libreria porque copié la carpeta en la misma que contine el archivo pero hay que cambiarlo
 import database.db as db
 from sqlalchemy import Column, Integer, String, Float, Boolean
 from sqlalchemy.orm import relationship
