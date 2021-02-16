@@ -10,7 +10,7 @@ class Administrador(db.Base):
     id_administrador = Column('id_administrador', Integer, primary_key=True, nullable=False)
 
     #el tipo de dato se puede revisar aqui https://docs.sqlalchemy.org/en/13/core/type_basics.html#sqlalchemy.types.DateTime
-    fecha_crea = Column('fecha_crea', datetime.datetime, server_default=func.now(), nullable=True)
+    fecha_crea = Column('fecha_crea', DateTime, server_default=func.now(), nullable=True)
  
     def __init__(self, id_administrador):
         self.id_administrador = id_administrador
