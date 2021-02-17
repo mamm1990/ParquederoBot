@@ -1,7 +1,7 @@
+import database.db as db
 from sqlalchemy.sql.functions import func
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import DateTime
-import database.db as db
 from sqlalchemy import Column, Integer, String, Float, Boolean
 from sqlalchemy.orm import relationship
 

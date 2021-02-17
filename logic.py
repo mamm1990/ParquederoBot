@@ -2,14 +2,27 @@ import database.db as db
 from datetime import datetime
 from sqlalchemy import extract
 from models.Administrador import Administrador
+from models.Vehiculo import Vehiculo
+from models.Zona import Zona
+from models.Tiquete import Tiquete
+
+
 
 #########################################################
 def insert_admins():
-    Administrador(1528370599)#Marco Montoya
-    Administrador(0)#Alejandra Peralta
-    Administrador(1551638159)#Jose Omar Cardona
-    Administrador(000)#Cristian Ruiz
-    return True
+    #admin1 = Administrador(1528370599)#Marco Montoya
+    #admin2 = Administrador(1221493315)#Alejandra Peralta
+    #admin3 = Administrador(1551638159)#Jose Omar Cardona
+    #admin4 = Administrador(1563918474)#Cristian Ruiz
+    administradores = [1528370599,1221493315,1551638159,1563918474]
+    for index in administradores:
+        admin = None
+        admin = db.session.query(Administrador).get(index)
+
+        if admin == None:
+            admin = Administrador(index)
+            db.session.add(admin)
+            db.session.commit()
 #########################################################
 def get_about_this(VERSION):
     response = (
