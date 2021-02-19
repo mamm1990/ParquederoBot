@@ -8,8 +8,8 @@ from sqlalchemy.orm import relationship
 class Tiquete(db.Base):
     __tablename__ = 'tiquete'
  
-    id_tiquete = Column('id_tiquete', String(5), primary_key=True, nullable=False)
-    id_vehiculo = Column('id_vehiculo', String(60), ForeignKey('vehiculo.id_vehiculo', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
+    id_tiquete = Column('id_tiquete', Integer, primary_key=True, autoincrement=True, nullable=False)
+    id_vehiculo = Column('id_vehiculo', Integer, ForeignKey('vehiculo.id_vehiculo', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
     id_zona = Column('id_zona', String(60), ForeignKey('zona.id_zona', onupdate='CASCADE', ondelete='CASCADE'), nullable=False)
     fecha_ingreso = Column('fecha_ingreso', DateTime, server_default=func.now(), nullable=False)
     fecha_salida = Column('fecha_salida', DateTime, nullable=True)

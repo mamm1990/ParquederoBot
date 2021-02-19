@@ -7,7 +7,7 @@ from sqlalchemy.orm import relationship
 class Vehiculo(db.Base):
     __tablename__ = 'vehiculo'
  
-    id_vehiculo = Column('id_vehiculo', String(60), primary_key=True, nullable=False)
+    id_vehiculo = Column('id_vehiculo', Integer, primary_key=True, autoincrement=True, nullable=False)
     id_usuario = Column('id_usuario', String(60), nullable=False)
     tipo_vehiculo = Column('tipo_vehiculo', String(100), nullable=False)
     placa = Column('placa', String(10), nullable=False)
