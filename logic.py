@@ -6,8 +6,6 @@ from models.Vehiculo import Vehiculo
 from models.Zona import Zona
 from models.Tiquete import Tiquete
 
-
-
 #########################################################
 def insert_admins():
     #admin1 = Administrador(1528370599)#Marco Montoya
@@ -68,6 +66,16 @@ def get_help_message ():
     "*ubicar vehiculo|ubicar|ubv {placa}* - Ubicar Vehículo\n"
     )
     return response
+#########################################################
+
+def get_zona (placa_vehiculo):
+    id_ve=db.session.query(Vehiculo).filter_by(placa=placa_vehiculo).get(id_vehiculo)
+    
+    zona=db.session.query(Tiquete).filter_by(id_vehiculo=id_ve).get(id_zona)
+
+    db.session.commit()
+
+    return zona
 
 #########################################################
 def get_fallback_message (text):
