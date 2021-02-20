@@ -26,7 +26,7 @@ def on_command_start(message):
     logic.get_help_message(),
     parse_mode="Markdown")
 
-#########################################################
+######################################################### 
 @bot.message_handler(commands=['help'])
 def on_command_help(message):
     bot.send_chat_action(message.chat.id, 'typing')
@@ -45,8 +45,6 @@ def on_command_about(message):
     logic.get_about_this(config.VERSION), parse_mode="Markdown")
 
 #########################################################
-#   4. Agregar, Listar y Eliminar Vehiculo y PRuebas
-#	5. Registrar Ingreso y Salidad del Vehiculo y Pruebas
 @bot.message_handler(commands=['about'])
 def on_command_about(message):
     
@@ -56,16 +54,17 @@ def on_command_about(message):
     logic.get_about_this(config.VERSION), parse_mode="Markdown")
 
 #########################################################
-#   4. Agregar, Listar y Eliminar Vehiculo y PRuebas
+#   4. Agregar, Listar y Eliminar Vehiculo y Pruebas
 #	5. Registrar Ingreso y Salidad del Vehiculo y Pruebas
-#@bot.message_handler(regexp=r"(^)(agregar vehiculo|agv) ([+-]?([0-9]*[.])?[0-9]+) ([A-Z0-9\-]+)$")
-@bot.message_handler(regexp=r"(^)agregar vehiculo|agv ([a-zA-Z0-9_ ]*) tipo ([0-9]{1,})($)")
+#Agregar Vehículo
+@bot.message_handler(regexp=r"(^)agregar vehiculo|agv placa ([a-zA-Z0-9_ ]*) tipo ([0-9]{1,})($)")
 def on_reg_vehicle(message):
     bot.send_chat_action(message.chat.id, 'typing')
 
-    parts = re.match(r"(^)agregar vehiculo|agv ([a-zA-Z0-9_ ]*) tipo ([0-9]{1,})($)", message.text)
+    parts = re.match(r"(^)agregar vehiculo|agv placa ([a-zA-Z0-9_ ]*) tipo ([0-9]{1,})($)", message.text, re.IGNORECASE)
 
-    # print (parts.groups())
+    #Ejemplos: Carro: AGV PLACA UES070 TIPO 2     Moto: agv placa NAN208 tipo 1
+              
     placa = parts.group(2)
     tipo = float (parts.group(3))
 
@@ -74,10 +73,14 @@ def on_reg_vehicle(message):
     tipoVehiculo = None
 
     if tipo == 1 : 
-        tipoVehiculo = "Moto"
+        tipoVehiculo = "Carro"
 
     if tipo == 2 : 
-        tipoVehiculo = "Carro"     
+        tipoVehiculo = "Moto"    
+
+    if tipo not in [1, 2]:
+	    bot.reply_to(message, f"Error, tipo de registro inválido: {tipo} Digite 1 para Carro ó 2 para Moto")
+	    return 
 
     control = logic.add_vehiculo (tipoVehiculo, placa, idUsuario)
 
@@ -86,28 +89,64 @@ def on_reg_vehicle(message):
         f"\U0001F6FB Vehículo Registrado con Placa:  {placa}" if control == True
         else "\U0001F4A9 Tuve problemas registrando el Vehiculo, ejecuta /start y vuelve a intentarlo")  
 
+######################################################### 
+# Eliminar Vehiculo
+@bot.message_handler(regexp=r"(^)remover vehiculo|rmv placa ([a-zA-Z0-9_ ]*)($)")
+def on_remove_vehiculo(message):
+    bot.send_chat_action(message.chat.id, 'typing')
 
-        #parts = re.match(
-     #   r"(^)(agregar vehiculo|agv) ([+-]?([0-9]*[.])?[0-9]+) ([a-zA-Z0-9_ ]*)$",          
-      #  message.text,
-      #  re.IGNORECASE) 
-
+    parts = re.match(r"(^)remover vehiculo|rmv placa ([a-zA-Z0-9_ ]*)($)", message.text, re.IGNORECASE)
     
+    #Ejemplo: rmv placa UES071
 
-    #print (parts.groups())         
-    #placa = parts.group(4) 
-    #tipo = parts.group(3) 
-    #tipo = float(parts[4]) 
-
-    #@bot.message_handler(regexp=r"(^)agregar ([a-zA-Z0-9_ ]*) prioridad ([0-9]{1,})($)")
-
-    #parts = re.match(r"(^)agregar ([a-zA-Z0-9_ ]*) prioridad ([0-9]{1,})($)", message.text)
-
-	# print (parts.groups())
-	#task = parts.group(2)
-	#priority = parts.group(3)  
+    placaVehiculo = parts.group(2)
     
+    control = logic.remove_vehiculo(message.from_user.id, placaVehiculo)
+    
+    bot.reply_to(message, f"Vehículo con placa {placaVehiculo} removido." if control else f"No se pudo remover el vehículo con placa: {placaVehiculo}")
 
+#########################################################      
+# Listar Vehículos
+@bot.message_handler(regexp=r"^(listar vehiculos|lsv)$")
+def on_list_vehiculos(message):
+	bot.send_chat_action(message.chat.id, 'typing')
+
+	text = ""	
+	vehiculos = logic.list_vehiculos()
+
+	text = "``` Listado de vehiculos:\n\n"
+
+	for vehiculo in vehiculos:
+		text += f"| Tipo:  {vehiculo.tipo_vehiculo} | Placa: {vehiculo.placa} | ID: {vehiculo.id_vehiculo}|\n"
+
+	text += "```"
+	
+	bot.reply_to(message, text, parse_mode="Markdown")
+
+######################################################### 
+#*Consultar Ubicacion del Vehiculo en la zona de parqueo 
+# y pruebas, 
+#*Casos de refactorizacion
+#*Ubicar vehiculo|ubicar|ubv {placa}* - Ubicar Vehículo\n"
+
+@bot.message_handler(regexp=r"^(ubicar vehiculo|placa) en ([0-9]{1,2}) de ([0-9]{4})$")
+def on_list_earnings(message):
+    bot.send_chat_action(message.chat.id, 'typing')
+    
+    parts = re.match(
+    r"^(ubicar vehiculo|placa) en ([0-9]{1,2}) de ([0-9]{4})$",
+    message.text)
+    
+    zona = logic.get_zona (message.from_user.id)
+    text=""  
+    
+    if not zona:
+        text = f"\U0001F633 El vehiculo no está parqueado en ninguna zona"
+    else:
+        text = "``` La zona en que se encuentra ubicado el vehiculo es:\n\n"
+        zona
+        
+        bot.reply_to(message, text, parse_mode="Markdown")
 
 #########################################################
 # Default cuando se ingresa un valor invalido:
