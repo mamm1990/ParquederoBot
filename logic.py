@@ -1,7 +1,9 @@
 import database.db as db
+import sqlite3
 from datetime import datetime
 from sqlalchemy import extract
 from models.Administrador import Administrador
+from models.Vehiculo import Vehiculo
 
 #########################################################
 def insert_admins():
@@ -47,7 +49,7 @@ def get_help_message ():
     "*agregar zona|agz {idzona}, {disponible}* - Agregar Nueva Zona (sólo admin)\n"
     "*listar zonas|lsz* - Listar Zonas Agregadas (sólo admin)\n"
     "*remover zona|rmz {idzona}* - Remover Zona (sólo admin)\n"
-    "*agregar vehiculo|agv {placa} , {tipo}* (Tipos Vehículo: Carro,Moto)- Agregar Vehículo\n"
+    "*agregar vehiculo|agv {placa} , tipo {tipo}* (Tipos Vehículo: 1. Carro, 2. Moto)- Agregar Vehículo\n"
     "*listar vehiculos|lsv* - Listar Vehículos\n"
     "*remover vehiculo|rmv {placa}* - Remover Vehiculo\n"
     "*registrar ingreso|ingreso|ring {placa} en la zona {idzona}* - Registrar Ingreso Vehículo\n"
@@ -55,6 +57,42 @@ def get_help_message ():
     "*ubicar vehiculo|ubicar|ubv {placa}* - Ubicar Vehículo\n"
     )
     return response
+
+#########################################################
+def add_vehiculo(tipoVehiculo, placa, idUsuario):#id_vehiculo, id_usuario, tipo_vehiculo, placa, fecha_crea):
+
+    #vehiculo = db.session.query(Vehiculo)
+    #db.session.commit()
+
+    #if vehiculo == None:
+     #   vehiculo = Vehiculo(id_vehiculo, id_usuario, tipo_vehiculo, placa, fecha_crea)
+      #  db.session.add(vehiculo)
+       # db.session.commit()
+        #return True
+
+    #return False 
+    
+    #conn = sqlite3.connect('db.db') 
+    #conn.execute("INSERT INTO Vehiculo (id_usuario,tipo_vehiculo,placa,fecha_crea) "
+    #            "VALUES (001, '01', 'Carro', 'IPD 153', '18/02/2021')")
+
+    #conn.commit()
+    #conn.close()
+    #response = placa
+
+    #return response 
+    
+    
+    nuevoVehiculo = Vehiculo(10, idUsuario, tipoVehiculo, placa)
+        
+
+    db.session.add(nuevoVehiculo)
+
+    db.session.commit()
+
+    return True
+
+
 
 #########################################################
 def get_fallback_message (text):
