@@ -15,8 +15,7 @@ class Tiquete(db.Base):
     fecha_salida = Column('fecha_salida', DateTime, nullable=True)
     duracion = Column('duracion', Float, nullable=False)
  
-    def __init__(self, id_tiquete, id_vehiculo, id_zona, duracion =0):
-        self.id_tiquete = id_tiquete
+    def __init__(self, id_vehiculo, id_zona, duracion =0):        
         self.id_vehiculo = id_vehiculo
         self.id_zona = id_zona
         self.duracion = duracion
