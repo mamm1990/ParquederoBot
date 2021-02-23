@@ -129,6 +129,114 @@ def on_remove_vehiculo(message):
     except:
             bot.reply_to(message, f"💩 Tuve problemas removiendo el Vehiculo, ejecuta /start y vuelve a intentarlo")
 
+#########################################################
+#Agregar Zona de Parqueo
+@bot.message_handler(regexp=r"(^)agregar zona|agz zona ([a-zA-Z0-9_ ]*) disponibilidad ([0-9]{1,})($)")
+def on_reg_zona(message):
+    bot.send_chat_action(message.chat.id, 'typing')	
+        
+    parts = re.match(r"(^)agregar zona|agz zona ([a-zA-Z0-9_ ]*) disponibilidad ([0-9]{1,})($)", message.text, re.IGNORECASE)
+    
+    try:
+        id_zona = parts.group(2)
+        disponibilidad_zona = int (parts.group(3)) 
+        
+        text=""
+
+        if logic.check_admin(message.from_user.id): 
+            obtenerZona = logic.get_IdZona(id_zona)
+
+            if not obtenerZona:
+			    #Ejemplo: agz zona ZN02 disponibilidad 1
+                
+                if disponibilidad_zona not in [0, 1]:
+                    text = f"Error, disponibiliad de la zona inválido: {disponibilidad_zona} Digite 1 para disponible ó 0 para no disponible"
+                
+                else:
+                    control = logic.add_zona (id_zona, disponibilidad_zona)
+                    
+                    if control == True :
+                        text = f"🌳 Zona Registrada con identificacion:  {id_zona}"
+                    else:
+                        text = f"😔 Tuve problemas registrando la zona, ejecuta /start y vuelve a intentarlo"
+            else:
+                text = f"🚨 La zona con identificación {id_zona} ya se encuentra registrada."
+        else:
+            text = f"🥺 Esta funcionalidad sólo está disponible para administradores"
+            
+        bot.reply_to(message, text, parse_mode="Markdown")
+    except:
+        bot.reply_to(message, f"💩 Tuve problemas agregando la Zona, ejecuta /start valida tus datos y vuelve a intentarlo")
+
+######################################################### 
+# Eliminar Zona de Parqueo
+@bot.message_handler(regexp=r"(^)remover zona|rmz zona ([a-zA-Z0-9_ ]*)")
+def on_remove_zona(message):
+    bot.send_chat_action(message.chat.id, 'typing')
+
+    parts = re.match(r"(^)remover zona|rmz zona ([a-zA-Z0-9_ ]*)($)", message.text, re.IGNORECASE)
+    text = ""
+    
+    try:
+        if logic.check_admin(message.from_user.id):
+            #Ejemplo: rmz zona ZN01
+            idZona = parts.group(2)
+
+            obtenerZona = logic.get_IdZona(idZona)
+            
+            if obtenerZona:
+                
+                control = logic.remove_zona(idZona)
+
+                if control == True :
+                    text = f"🌳 Zona de parqueo identicada con {idZona} removida con éxito."
+                else:
+                    text = f"🚨 No se pudo remover la zona identiciada: {idZona}"
+            else:
+                text = f"🚨 La zona con identificación {idZona} no se encuentra registrada." 
+        else:
+            text = f"🥺 Esta funcionalidad sólo está disponible para administradores"
+            
+        bot.reply_to(message, text, parse_mode="Markdown")
+    except:
+        bot.reply_to(message, f"💩 Tuve problemas eliminando la Zona, ejecuta /start valida tus datos y vuelve a intentarlo")
+		
+#########################################################      
+# Listar Zona de Parqueo
+@bot.message_handler(regexp=r"^(listar zonas|lsz)$")
+def on_list_zona(message):
+    
+    bot.send_chat_action(message.chat.id, 'typing')
+    
+    text = ""
+    zona_disponible = ""
+        
+    if logic.check_admin(message.from_user.id):
+        Zonas = logic.list_zonas()
+
+        if Zonas:
+            text = "``` Listado de zonas de parqueo:\n\n"
+            
+            for Zona in Zonas:
+
+                disponibilidad = Zona.disponible
+
+                if disponibilidad == 1 : 
+                   zona_disponible = 'Disponible'
+                if disponibilidad == 0 : 
+                    zona_disponible = 'No Disponible'
+                                
+                text += f"| Zona:  {Zona.id_zona}: {zona_disponible} |\n"
+            
+            text += "```"
+        else:
+            text = f"🚨 Aún no se encuentran zonas registradas"
+        
+    else:
+        text = f"🥺 Esta funcionalidad sólo está disponible para administradores"
+        
+    bot.reply_to(message, text, parse_mode="Markdown")
+
 ######################################################### 
 # Registrar Ingreso del Vehiculo
 @bot.message_handler(regexp=r"(^)registrar ingreso|ingreso|ring placa ([a-zA-Z0-9_ ]*) en la zona ([a-zA-Z0-9_ ]*)($)")
@@ -212,6 +320,38 @@ def on_list_earnings(message):
         zona
         
         bot.reply_to(message, text, parse_mode="Markdown")
+
+#########################################################
+#Indica Fecha y hora del último parqueo en caso de que el auto no se encuentre en la universidad
+@bot.message_handler(regexp=r"(^)Fecha y hora último parqueo|ultimo parqueo|ulfh placa ([a-zA-Z0-9_ ]*)($)")
+def on_reg_ultTiquete(message):
+    bot.send_chat_action(message.chat.id, 'typing')
+
+    parts = re.match(r"(^)Fecha y hora último parqueo|ultimo parqueo|ulfh placa ([a-zA-Z0-9_ ]*)($)", message.text, re.IGNORECASE)
+
+    #Ejemplo: ulfh placa UES071
+    text = ""
+    
+    try:
+        placa = parts.group(2)
+        idUsuario = message.from_user.id
+        
+        ultParqueo = logic.get_fecha_ultimoParqueo (idUsuario,placa)
+        
+        if  ultParqueo:              
+
+            if ultParqueo.fecha_salida is None: 
+                text = f"🚨 El vehículo aún se encuentra en una zona de parqueo, consulta la opción ubv"
+
+            else:
+                text = f"🚗 Vehículo con placa {placa} última fecha de ingreso {ultParqueo.fecha_ingreso} y fecha de salida {ultParqueo.fecha_salida}."
+                
+        else:
+            text = f"🚨 No se encuentra registros del vehículo con placa {placa}"
+            
+        bot.reply_to(message, text, parse_mode="Markdown")
+    except:
+        bot.reply_to(message, f"💩 Tuve problemas consultando la información, ejecuta /start valida tus datos y vuelve a intentarlo")
 
 #########################################################
 # Default cuando se ingresa un valor invalido:

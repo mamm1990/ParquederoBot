@@ -7,6 +7,7 @@ from models.Administrador import Administrador
 from models.Vehiculo import Vehiculo
 from models.Zona import Zona
 from models.Tiquete import Tiquete
+from sqlalchemy import func
 
 #########################################################
 def insert_admins():
@@ -23,6 +24,16 @@ def insert_admins():
             admin = Administrador(index)
             db.session.add(admin)
             db.session.commit()
+
+#########################################################
+def check_admin(user_id):  
+    
+    buscaAdmin = db.session.query(Administrador).filter_by(
+        id_administrador = user_id
+    ).first()    
+
+    return buscaAdmin
+
 #########################################################
 def get_about_this(VERSION):
     response = (
@@ -57,17 +68,19 @@ def get_help_message ():
     "*/start* - Inicia la interacción con el bot (obligatorio)\n"
     "*/help* - Muestra este mensaje de ayuda\n"
     "*/about* - Muestra detalles de esta aplicación\n"
-    "*agregar zona|agz {idzona}, {disponible}* - Agregar Nueva Zona (sólo admin)\n"
+    "*agregar zona|agz zona {idzona} disponibilidad {disponible}* (0. No Disponible, 1 Disponible)- Agregar Nueva Zona (sólo admin)\n"
     "*listar zonas|lsz* - Listar Zonas Agregadas (sólo admin)\n"
-    "*remover zona|rmz {idzona}* - Remover Zona (sólo admin)\n"
+    "*remover zona|rmz zona {idzona}* - Remover Zona (sólo admin)\n"
     "*agregar vehiculo|agv placa {placa} , tipo {tipo}* (Tipos Vehículo: 1. Carro, 2. Moto)- Agregar Vehículo\n"
     "*listar vehiculos|lsv* - Listar Vehículos\n"
     "*remover vehiculo|rmv placa {placa}* - Remover Vehiculo\n"
-    "*registrar ingreso|ingreso|ring {placa} en la zona {idzona}* - Registrar Ingreso Vehículo\n"
+    "*registrar ingreso|ingreso|ring placa {placa} en la zona {idzona}* - Registrar Ingreso Vehículo\n"
     "*registrar salida|salida|rsal {placa}* - Registrar Salida Vehículo\n"
     "*ubicar vehiculo|ubicar|ubv {placa}* - Ubicar Vehículo\n"
+    "*Fecha y hora último parqueo|ultimo parqueo|ulfh placa {placa}* - Indica Fecha y hora del último parqueo\n"
     )
     return response
+
 #########################################################
 #Obtener Zona
 def get_zona (placa_vehiculo):
@@ -119,6 +132,50 @@ def remove_vehiculo(user_id, placaVehiculo):
     
     return True        
 
+#########################################################
+# Busca si existe la zona
+def get_IdZona(idZona):  
+    
+    buscarZona = db.session.query(Zona).filter_by(
+        id_zona = idZona
+    ).first()    
+
+    return buscarZona       
+
+#########################################################
+#Agregar zona
+def add_zona(idZona, disponibilidad):  
+    
+    nuevaZona = Zona(idZona, disponibilidad)
+
+    db.session.add(nuevaZona)
+
+    db.session.commit()
+
+    return True
+######################################################### 
+# Eliminar Zona
+def remove_zona(idZona):
+    zona = db.session.query(Zona).filter(
+        Zona.id_zona == idZona
+    ).first()
+
+    if not zona:
+        db.session.rollback()
+        return False   
+
+    db.session.delete(zona)    
+    db.session.commit()
+    
+    return True    
+
+######################################################### 
+# Listar Zona
+def list_zonas():
+	zona = db.session.query(Zona).all()
+
+	return zona
+    
 ######################################################### 
 # Registrar Ingreso del Vehiculo
 def ingresar_vehiculo(user_id, placaVehiculo, zonaVehiculo):
@@ -205,6 +262,38 @@ def calcularDuaracion(idVehiculo):
     return True
 
 #########################################################
+def get_tiquete(idVehiculo):
+    buscaTiquete = db.session.query((func.max(Tiquete.fecha_ingreso)).label("fecha_ingreso"), Tiquete.fecha_salida).filter_by(
+        id_vehiculo = idVehiculo   
+    ).first()
+
+    return buscaTiquete
+
+#########################################################
+# Indica Fecha y hora del último parqueo en caso de que el auto no se encuentre en la universidad
+def get_fecha_ultimoParqueo(user_id, placaVehiculo):
+    
+    Obtplaca = get_placa(placaVehiculo)
+
+    if not Obtplaca:
+        return 
+
+    vehiculo = db.session.query(Vehiculo).filter_by(
+        id_usuario = user_id
+    ).filter_by(
+        placa = placaVehiculo
+    ).first()
+
+    idVehiculo = int(vehiculo.id_vehiculo)
+
+    Tiquete = get_tiquete(idVehiculo)
+    
+    if not Tiquete:
+        return
+
+    return Tiquete
+
+#########################################################
 # Actualizar la disponibilidad de la zona 
 def get_placa(placaVehiculo):  
     
@@ -219,4 +308,4 @@ def get_fallback_message (text):
     response = f"\U0001F648 No entendí lo que me acabas de decir"  
     return response
 
-######################################################### 
+#########################################################
