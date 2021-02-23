@@ -83,14 +83,15 @@ def get_help_message ():
 
 #########################################################
 #Obtener Zona
-def get_zona (placa_vehiculo):
-    id_ve=db.session.query(Vehiculo).filter_by(placa=placa_vehiculo).get(id_vehiculo)
+def get_zona(placa_vehiculo):
+     
+    id_vehiculo=db.session.query(Vehiculo).filter(Vehiculo.placa==placa_vehiculo).first().id_vehiculo
     
-    zona=db.session.query(Tiquete).filter_by(id_vehiculo=id_ve).get(id_zona)
+    zona=db.session.query(Tiquete).filter(Tiquete.id_vehiculo==id_vehiculo).first().id_zona
 
     db.session.commit()
-
-    return zona
+    
+    return str(zona)    
 
 #########################################################
 #Agregar Vehículo

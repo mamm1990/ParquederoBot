@@ -302,24 +302,15 @@ def on_out_vehiculo(message):
 #*Casos de refactorizacion
 #*Ubicar vehiculo|ubicar|ubv {placa}* - Ubicar Vehículo\n"
 
-@bot.message_handler(regexp=r"^(ubicar vehiculo|placa) en ([0-9]{1,2}) de ([0-9]{4})$")
-def on_list_earnings(message):
+@bot.message_handler(regexp=r"(^)ubicar vehiculo|ubicar|ubv placa ([a-zA-Z0-9_ ]*)")
+def on_get_zone(message):
     bot.send_chat_action(message.chat.id, 'typing')
+    parts = re.match(r"(^)ubicar vehiculo|ubicar|ubv placa ([a-zA-Z0-9_ ]*)",message.text,re.IGNORECASE)
+    placa_vehiculo=parts.group(2)
+    zona = logic.get_zona(placa_vehiculo)
+    text = "La zona en que se encuentra ubicado el vehiculo es:\n\n"+zona
     
-    parts = re.match(
-    r"^(ubicar vehiculo|placa) en ([0-9]{1,2}) de ([0-9]{4})$",
-    message.text)
-    
-    zona = logic.get_zona (message.from_user.id)
-    text=""  
-    
-    if not zona:
-        text = f"\U0001F633 El vehiculo no está parqueado en ninguna zona"
-    else:
-        text = "``` La zona en que se encuentra ubicado el vehiculo es:\n\n"
-        zona
-        
-        bot.reply_to(message, text, parse_mode="Markdown")
+    bot.reply_to(message, text, parse_mode="Markdown")
 
 #########################################################
 #Indica Fecha y hora del último parqueo en caso de que el auto no se encuentre en la universidad
