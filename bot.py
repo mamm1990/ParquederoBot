@@ -53,32 +53,41 @@ def on_reg_vehicle(message):
     parts = re.match(r"(^)agregar vehiculo|agv placa ([a-zA-Z0-9_ ]*) tipo ([0-9]{1,})($)", message.text, re.IGNORECASE)
 
     #Ejemplos: Carro: AGV PLACA UES070 TIPO 2     Moto: agv placa NAN208 tipo 1 
-              
-    placa = parts.group(2)
-    tipo = float (parts.group(3))
 
-    idUsuario = message.from_user.id
-    
-    tipoVehiculo = None
+    try:
+        placa = parts.group(2)
+        tipo = float (parts.group(3))
 
-    if tipo == 1 : 
-        tipoVehiculo = "Carro"
+        idUsuario = message.from_user.id
 
-    if tipo == 2 : 
-        tipoVehiculo = "Moto"    
+        tipoVehiculo = None
+          
+        obtenerPlaca = logic.get_placa (placa)
+        
+        if  not obtenerPlaca:              
 
-    if tipo not in [1, 2]:
-	    bot.reply_to(message, f"Error, tipo de registro inválido: {tipo} Digite 1 para Carro ó 2 para Moto")
-	    return 
+            if tipo == 1 : 
+                tipoVehiculo = "Carro"
 
-    control = logic.add_vehiculo (tipoVehiculo, placa, idUsuario)
+            if tipo == 2 : 
+                tipoVehiculo = "Moto"    
 
-    bot.reply_to(
-        message,
-        f"🚗 Vehículo Registrado con Placa:  {placa}" if control == True
-        else "🙈 Tuve problemas registrando el Vehiculo, ejecuta /start y vuelve a intentarlo")  
+            if tipo not in [1, 2]:
+                bot.reply_to(message, f"🚨 Error, tipo de registro inválido: {tipo} Digite 1 para Carro ó 2 para Moto")
+                return 
 
-######################################################### 
+            control = logic.add_vehiculo (tipoVehiculo, placa, idUsuario)
+
+            bot.reply_to(
+                message,
+                f"🚗 Vehículo Registrado con Placa:  {placa}" if control == True
+                else "🙈 Tuve problemas registrando el Vehiculo, ejecuta /start y vuelve a intentarlo") 
+        else: 
+            bot.reply_to(message, f"🚨 El Vehículo con placa {placa} ya se encuentra registrado.")
+    except:
+            bot.reply_to(message, f"💩 Tuve problemas agregando el Vehiculo, ejecuta /start valida tus datos y vuelve a intentarlo")
+
+#########################################################  
 # Listar Vehículos
 @bot.message_handler(regexp=r"^(listar vehiculos|lsv)$")
 def on_list_vehiculos(message):
@@ -103,14 +112,17 @@ def on_remove_vehiculo(message):
     bot.send_chat_action(message.chat.id, 'typing')
 
     parts = re.match(r"(^)remover vehiculo|rmv placa ([a-zA-Z0-9_ ]*)($)", message.text, re.IGNORECASE)
-    
+
     #Ejemplo: rmv placa UES071
 
-    placaVehiculo = parts.group(2)
-    
-    control = logic.remove_vehiculo(message.from_user.id, placaVehiculo)
-    
-    bot.reply_to(message, f"🚗 Vehículo con placa {placaVehiculo} removido." if control else f"🚨 No se pudo remover el vehículo con placa: {placaVehiculo}")
+    try:    
+        placaVehiculo = parts.group(2)
+        
+        control = logic.remove_vehiculo(message.from_user.id, placaVehiculo)
+        
+        bot.reply_to(message, f"🚗 Vehículo con placa {placaVehiculo} removido." if control else f"🚨 No se pudo remover el vehículo con placa: {placaVehiculo}")
+    except:
+            bot.reply_to(message, f"💩 Tuve problemas removiendo el Vehiculo, ejecuta /start y vuelve a intentarlo")
 
 ######################################################### 
 # Registrar Ingreso del Vehiculo
@@ -138,9 +150,9 @@ def on_in_vehiculo(message):
             f"🚗 Vehículo Ingrezado a la Zona:  {zonaVehiculo}" if control == True
             else "🙈 Tuve problemas ingresando el Vehiculo, ejecuta /start y vuelve a intentarlo") 
         else:    
-            bot.reply_to(message, f"😔 Zona: {zonaVehiculo} no se encuentra disponible") 
+            bot.reply_to(message, f"⚠️ Zona: {zonaVehiculo} no se encuentra disponible") 
     except:
-            bot.reply_to(message, f"💩 Tuve problemas ingresando el Vehiculo, valida la zona, ejecuta /start y vuelve a intentarlo")
+            bot.reply_to(message, f"💩 Tuve problemas ingresando el Vehiculo, valida la zona y placa, ejecuta /start y vuelve a intentarlo")
 
 ######################################################### 
 # Registrar Salida del Vehiculo 
@@ -165,7 +177,7 @@ def on_out_vehiculo(message):
             f"🚗 Salida exitosa de Vehículo:  {placaVehiculo}" if control == True
             else "🙈 Tuve problemas con la salida del Vehiculo, ejecuta /start y vuelve a intentarlo") 
     except:
-            bot.reply_to(message, f"💩 Tuve problemas ingresando el Vehiculo, valida la zona y placa, ejecuta /start y vuelve a intentarlo")
+            bot.reply_to(message, f"💩 Tuve problemas registrando la salida del Vehiculo, valida la zona y placa, ejecuta /start y vuelve a intentarlo")
 
 ######################################################### 
 #*Consultar Ubicacion del Vehiculo en la zona de parqueo  

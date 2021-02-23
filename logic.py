@@ -1,6 +1,3 @@
-from sqlalchemy.sql.elements import Null
-from sqlalchemy.sql.expression import null
-from sqlalchemy.sql.functions import func
 from sqlalchemy.sql.sqltypes import DateTime
 import database.db as db
 import sqlite3
@@ -205,11 +202,21 @@ def calcularDuaracion(idVehiculo):
 
     db.session.commit()
 
-    return True     
+    return True
+
+#########################################################
+# Actualizar la disponibilidad de la zona 
+def get_placa(placaVehiculo):  
+    
+    buscarPlaca = db.session.query(Vehiculo).filter_by(
+        placa = placaVehiculo
+    ).first()    
+
+    return buscarPlaca    
 
 #########################################################
 def get_fallback_message (text):
     response = f"\U0001F648 No entendí lo que me acabas de decir"  
     return response
 
-#########################################################
+######################################################### 
