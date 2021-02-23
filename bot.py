@@ -45,15 +45,6 @@ def on_command_about(message):
     logic.get_about_this(config.VERSION), parse_mode="Markdown")
 
 #########################################################
-@bot.message_handler(commands=['about'])
-def on_command_about(message):
-    
-    bot.send_chat_action(message.chat.id, 'typing')
-    bot.send_message(
-    message.chat.id,
-    logic.get_about_this(config.VERSION), parse_mode="Markdown")
-
-#########################################################
 #Agregar Vehículo
 @bot.message_handler(regexp=r"(^)agregar vehiculo|agv placa ([a-zA-Z0-9_ ]*) tipo ([0-9]{1,})($)")
 def on_reg_vehicle(message):

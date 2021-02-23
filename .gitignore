@@ -146,3 +146,4 @@ cython_debug/
 
 #Sqlite
 *.sqlite
+database/parqueaderos.sqlite
