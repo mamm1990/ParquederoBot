@@ -82,7 +82,7 @@ def get_help_message ():
     return response
 
 #########################################################
-#Obtener Zona
+#Obtener Zona segun la placa del vehiculo
 def get_zona(placa_vehiculo):
      
     id_vehiculo=db.session.query(Vehiculo).filter(Vehiculo.placa==placa_vehiculo).first().id_vehiculo
