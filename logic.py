@@ -264,6 +264,29 @@ def calcularDuaracion(idVehiculo):
     return True
 
 #########################################################
+# Validar si un vehiculo se encuentra parqueado
+def get_parking(placaVehiculo, idUsuario):    
+
+    vehiculo = db.session.query(Vehiculo).filter(
+        Vehiculo.id_usuario == idUsuario
+    ).filter(
+        Vehiculo.placa == placaVehiculo
+    ).first()
+
+    idVehiculo = vehiculo.id_vehiculo
+
+    zona = db.session.query(Tiquete).filter(
+        Tiquete.id_vehiculo == idVehiculo
+    ).filter(
+        Tiquete.fecha_salida == None
+    ).first()    
+
+    if zona == None:
+        return zona
+    else:
+        return zona.id_zona
+
+#########################################################
 def get_tiquete(idVehiculo):
     buscaTiquete = db.session.query((func.max(Tiquete.fecha_ingreso)).label("fecha_ingreso"), Tiquete.fecha_salida).filter_by(
         id_vehiculo = idVehiculo   

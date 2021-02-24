@@ -56,7 +56,7 @@ def on_reg_vehicle(message):
 
     try:
         placa = parts.group(2)
-        tipo = float (parts.group(3))
+        tipo = float(parts.group(3))
 
         placaVehiculo = placa.upper()
 
@@ -119,9 +119,11 @@ def on_remove_vehiculo(message):
     #Ejemplo: rmv placa UES071
 
     try:
-        placaVehiculo = parts.group(2)
+        placa = parts.group(2)
 
-        obtenerPlaca = logic.get_placa (placaVehiculo)
+        placaVehiculo = placa.upper()
+
+        obtenerPlaca = logic.get_placa (placaVehiculo)        
         
         if  not obtenerPlaca:  
             bot.reply_to(message, f"🚨 El vehículo con placa {placaVehiculo} no se encuentra registrado")
@@ -149,7 +151,7 @@ def on_reg_zona(message):
             obtenerZona = logic.get_IdZona(id_zona)
 
             if not obtenerZona:
-			    #Ejemplo: agz zona ZN02 disponibilidad 1
+			    #Ejemplo: agz zona ZN02
                 
                 disponibilidad_zona = 1
                 
@@ -248,11 +250,15 @@ def on_in_vehiculo(message):
     #Ejemplo: ring placa UES070 en la zona ZN02
 
     try:
-        placaVehiculo = parts.group(2)
+        placaVehiculo = parts.group(2).upper()
         zonaVehiculo = parts.group(3)
 
+        zonaParqueo = ""
+
+        idUsuario = message.from_user.id
+
         obtenerPlaca = logic.get_placa (placaVehiculo)
-        zona = logic.get_IdZona(zonaVehiculo)
+        zona = logic.get_IdZona(zonaVehiculo)        
 
         if zona:
             if  not obtenerPlaca:  
@@ -263,49 +269,57 @@ def on_in_vehiculo(message):
                 estado = float(0); 
 
                 if disponibilidad == True:
-                    control = logic.ingresar_vehiculo(message.from_user.id, placaVehiculo, zonaVehiculo)
-                    logic.update_dispo_zona(zonaVehiculo, estado)
-                    bot.reply_to(
-                    message,
-                    f"🚗 Vehículo Ingrezado a la Zona:  {zonaVehiculo}" if control == True
-                    else "🙈 Tuve problemas ingresando el Vehiculo, ejecuta /start y vuelve a intentarlo") 
+                    zonaParqueo = logic.get_parking(placaVehiculo, idUsuario)        
+                    if not zonaParqueo:
+                        control = logic.ingresar_vehiculo(message.from_user.id, placaVehiculo, zonaVehiculo)
+                        logic.update_dispo_zona(zonaVehiculo, estado)
+                        bot.reply_to(
+                        message,
+                        f"🚗 Vehículo Ingrezado a la Zona:  {zonaVehiculo}" if control == True
+                        else "🙈 Tuve problemas ingresando el Vehiculo, ejecuta /start y vuelve a intentarlo") 
+                    else:
+                        bot.reply_to(message, f"⚠️ El vehiculo: {placaVehiculo} ya se encuentra parqueado en zona {zonaParqueo}")
                 else:    
                     bot.reply_to(message, f"⚠️ Zona: {zonaVehiculo} no se encuentra disponible")
         else:
-            bot.reply_to(message, f"⚠️ Zona: {zonaVehiculo} no se encuentra registrada")
+            bot.reply_to(message, f"⚠️ Zona: {zonaVehiculo} no se encuentra registrada")        
     except:
             bot.reply_to(message, f"💩 Tuve problemas ingresando el Vehiculo, valida la zona y placa, ejecuta /start y vuelve a intentarlo")
 
 ######################################################### 
 # Registrar Salida del Vehiculo 
-@bot.message_handler(regexp=r"(^)registrar salida|salida|rsal placa ([a-zA-Z0-9_ ]*) en la zona ([a-zA-Z0-9_ ]*)($)")
+@bot.message_handler(regexp=r"(^)registrar salida|salida|rsal placa ([a-zA-Z0-9_ ]*)")
 def on_out_vehiculo(message):
     bot.send_chat_action(message.chat.id, 'typing')
 
-    parts = re.match(r"(^)registrar salida|salida|rsal placa ([a-zA-Z0-9_ ]*) en la zona ([a-zA-Z0-9_ ]*)($)", message.text, re.IGNORECASE)
+    parts = re.match(r"(^)registrar salida|salida|rsal placa ([a-zA-Z0-9_ ]*)", message.text, re.IGNORECASE)
         
-    #Ejemplo: rsal placa UES070 en la zona ZN02
+    #Ejemplo: rsal placa UES070
 
     try:
-        placaVehiculo = parts.group(2)
-        zonaVehiculo = parts.group(3)
+        placaVehiculo = parts.group(2).upper()       
         estado = float(1)
 
-        control = logic.reg_salida_vehiculo(message.from_user.id, placaVehiculo)
-        logic.update_dispo_zona(zonaVehiculo, estado)
-        bot.reply_to(
-            message,
-            f"🚗 Salida exitosa de Vehículo:  {placaVehiculo}" if control == True
-            else "🙈 Tuve problemas con la salida del Vehiculo, ejecuta /start y vuelve a intentarlo") 
+        obtenerPlaca = logic.get_placa (placaVehiculo)
+        if  not obtenerPlaca: 
+            bot.reply_to(message, f"🚨 El vehículo con placa {placaVehiculo} no se encuentra registrado")
+        else:
+            idUsuario = message.from_user.id
+            zonaVehiculo = logic.get_parking(placaVehiculo, idUsuario)                                      
+            if zonaVehiculo:
+                control = logic.reg_salida_vehiculo(message.from_user.id, placaVehiculo)
+                logic.update_dispo_zona(zonaVehiculo, estado)
+                bot.reply_to(
+                    message,
+                    f"🚗 Salida exitosa de Vehículo:  {placaVehiculo}" if control == True
+                    else "🙈 Tuve problemas con la salida del Vehiculo, ejecuta /start y vuelve a intentarlo") 
+            else:
+                bot.reply_to(message, f"⚠️ El vehiculo: {placaVehiculo} NO presena salidas pendientes")
     except:
             bot.reply_to(message, f"💩 Tuve problemas registrando la salida del Vehiculo, valida la zona y placa, ejecuta /start y vuelve a intentarlo")
 
 ######################################################### 
-#*Consultar Ubicacion del Vehiculo en la zona de parqueo  
-# y pruebas, 
-#*Casos de refactorizacion
 #*Ubicar vehiculo|ubicar|ubv {placa}* - Ubicar Vehículo\n"
-
 @bot.message_handler(regexp=r"(^)ubicar vehiculo|ubicar|ubv placa ([a-zA-Z0-9_ ]*)")
 def on_get_zone(message):
     bot.send_chat_action(message.chat.id, 'typing')
