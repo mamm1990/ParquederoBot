@@ -329,6 +329,17 @@ def get_placa(placaVehiculo):
     return buscarPlaca    
 
 #########################################################
+def getTipoVehiculo(tipo):
+    if tipo == 1 : 
+        return "Carro"
+
+    if tipo == 2 : 
+        return "Moto"    
+
+    if tipo not in [1, 2]:
+        bot.reply_to(message, f"🚨 Error, tipo de registro inválido: {tipo} Digite 1 para Carro ó 2 para Moto")
+        return 
+#########################################################
 def insert_administrador(user_id):
     admin = db.session.query(Administrador).get(user_id)
     db.session.commit()

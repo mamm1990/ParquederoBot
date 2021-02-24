@@ -8,6 +8,8 @@ import re
 import logic
 import database.db as db
 
+import sys
+
 #########################################################
 if __name__ == '__main__':
     db.Base.metadata.create_all(db.engine)
@@ -68,15 +70,7 @@ def on_reg_vehicle(message):
         
         if  not obtenerPlaca:              
 
-            if tipo == 1 : 
-                tipoVehiculo = "Carro"
-
-            if tipo == 2 : 
-                tipoVehiculo = "Moto"    
-
-            if tipo not in [1, 2]:
-                bot.reply_to(message, f"🚨 Error, tipo de registro inválido: {tipo} Digite 1 para Carro ó 2 para Moto")
-                return 
+            tipoVehiculo=logic.getTipoVehiculo(tipo)
 
             control = logic.add_vehiculo (tipoVehiculo, placaVehiculo, idUsuario)
 
@@ -87,7 +81,8 @@ def on_reg_vehicle(message):
         else: 
             bot.reply_to(message, f"🚨 El Vehículo con placa {placaVehiculo} ya se encuentra registrado.")
     except:
-            bot.reply_to(message, f"💩 Tuve problemas agregando el Vehiculo, ejecuta /start valida tus datos y vuelve a intentarlo")
+            #bot.reply_to(message, f"💩 Tuve problemas agregando el Vehiculo, ejecuta /start valida tus datos y vuelve a intentarlo")
+            bot.reply_to(message, sys.exc_info()[0])
 			
 #########################################################  
 # Listar Vehículos
