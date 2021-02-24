@@ -235,10 +235,6 @@ def get_disponibilidad_zona(zonaVehiculo):
 
     disponibilidad = zona.disponible
 
-#    if disponibilidad == 1 : 
-#        return True
-#    if disponibilidad == 0 : 
-#        return False
     return disponibilidad
 
 #########################################################
