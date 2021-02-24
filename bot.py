@@ -312,13 +312,13 @@ def on_get_zone(message):
         obtenerPlaca = logic.get_placa(placa_vehiculo)
 
         if not obtenerPlaca:
-            bot.reply_to(message, f"🚨 El vehículo con placa {placaVehiculo} no se encuentra registrado")
+            bot.reply_to(message, f"🚨 El vehículo con placa {placa_vehiculo} no se encuentra registrado")
         else:            
             zona = logic.get_zona(placa_vehiculo)
             text = "La zona en que se encuentra ubicado el vehiculo es:\n\n"+zona
             bot.reply_to(message, text, parse_mode="Markdown")
     except:
-        bot.reply_to(message, f"💩 Tuve problemas buscando el Vehiculo o el dato solicitado no se encuentra, ejecuta /start y vuelve a intentarlo")
+        bot.reply_to(message, f"💩 Tuve problemas buscando el Vehiculo, ejecuta /start y vuelve a intentarlo")
 
 #########################################################
 #Indica Fecha y hora del último parqueo en caso de que el auto no se encuentre en la universidad
