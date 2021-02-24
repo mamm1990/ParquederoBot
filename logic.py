@@ -76,7 +76,7 @@ def get_help_message ():
     "*remover vehiculo|rmv placa {placa}* - Remover Vehiculo\n"
     "*registrar ingreso|ingreso|ring placa {placa} en la zona {idzona}* - Registrar Ingreso Vehículo\n"
     "*registrar salida|salida|rsal {placa}* - Registrar Salida Vehículo\n"
-    "*ubicar vehiculo|ubicar|ubv {placa}* - Ubicar Vehículo\n"
+    "*ubicar vehiculo|ubicar|ubv placa {placa}* - Ubicar Vehículo\n"
     "*Fecha y hora último parqueo|ultimo parqueo|ulfh placa {placa}* - Indica Fecha y hora del último parqueo\n"
     "*insertar admin|ia| {id_user}* - Inseta Nuevo Administrador (sólo admin)\n"
     )
