@@ -251,7 +251,7 @@ def on_in_vehiculo(message):
 
     try:
         placaVehiculo = parts.group(2).upper()
-        zonaVehiculo = parts.group(3)
+        zonaVehiculo = parts.group(3).upper()
 
         zonaParqueo = ""
 
