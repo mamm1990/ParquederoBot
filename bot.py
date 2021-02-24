@@ -352,6 +352,29 @@ def on_reg_ultTiquete(message):
     except:
         bot.reply_to(message, f"💩 Tuve problemas consultando la información, ejecuta /start valida tus datos y vuelve a intentarlo")
 
+######################################################### 
+#*Consultar Ubicacion del Vehiculo en la zona de parqueo  
+# y pruebas, 
+#*Casos de refactorizacion
+#*Ubicar vehiculo|ubicar|ubv {placa}* - Ubicar Vehículo\n"
+
+@bot.message_handler(regexp=r"(^)insertar admin|ia ([a-zA-Z0-9_ ]*)")
+def on_insert_admin(message):
+    bot.send_chat_action(message.chat.id, 'typing')
+    parts = re.match(r"(^)insertar admin|ia ([a-zA-Z0-9_ ]*)",message.text,re.IGNORECASE)
+    
+    try:
+        id_user=parts.group(2)
+        resultado = logic.insert_administrador(id_user)
+
+        if resultado:
+            bot.reply_to(message, f"🚨 Nuevo Administrador registrado correctamente.")
+        else:            
+            text = "El administrador no fue registrado. Ya Existe.\n\n"
+            bot.reply_to(message, text, parse_mode="Markdown")
+    except:
+        bot.reply_to(message, f"💩 Tuve problemas insertando el nuevo administrador.")
+
 #########################################################
 # Default cuando se ingresa un valor invalido:
 @bot.message_handler(func=lambda message: True)
