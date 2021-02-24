@@ -177,7 +177,7 @@ def on_remove_zona(message):
     try:
         if logic.check_admin(message.from_user.id):
             #Ejemplo: rmz zona ZN01
-            idZona = parts.group(2)
+            idZona = parts.group(2).upper()
 
             obtenerZona = logic.get_IdZona(idZona)
             
