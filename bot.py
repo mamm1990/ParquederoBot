@@ -14,7 +14,7 @@ if __name__ == '__main__':
     logic.insert_admins()
 
 #########################################################
-@bot.message_handler(commands=['start'])
+@bot.message_handler(commands=['start', 'Start', 'START'])
 def on_command_start(message):
     bot.send_chat_action(message.chat.id, 'typing')
     bot.send_message(
@@ -27,7 +27,7 @@ def on_command_start(message):
     parse_mode="Markdown")
 
 ######################################################### 
-@bot.message_handler(commands=['help'])
+@bot.message_handler(commands=['help','Help', 'HELP'])
 def on_command_help(message):
     bot.send_chat_action(message.chat.id, 'typing')
     bot.send_message(
@@ -36,7 +36,7 @@ def on_command_help(message):
     parse_mode="Markdown")
 
 #########################################################
-@bot.message_handler(commands=['about'])
+@bot.message_handler(commands=['about', 'About', 'ABOUT'])
 def on_command_about(message):
     
     bot.send_chat_action(message.chat.id, 'typing')
@@ -255,7 +255,7 @@ def on_in_vehiculo(message):
         else:
             disponibilidad = logic.get_disponibilidad_zona(zonaVehiculo)
 
-            estado = float(0); 
+            estado = float(0)
 
             if disponibilidad == True:
                 control = logic.ingresar_vehiculo(message.from_user.id, placaVehiculo, zonaVehiculo)
