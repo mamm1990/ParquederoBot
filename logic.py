@@ -78,6 +78,7 @@ def get_help_message ():
     "*registrar salida|salida|rsal {placa}* - Registrar Salida Vehículo\n"
     "*ubicar vehiculo|ubicar|ubv {placa}* - Ubicar Vehículo\n"
     "*Fecha y hora último parqueo|ultimo parqueo|ulfh placa {placa}* - Indica Fecha y hora del último parqueo\n"
+    "*insertar admin|ia| {id_user}* - Inseta Nuevo Administrador (sólo admin)\n"
     )
     return response
 
@@ -303,6 +304,19 @@ def get_placa(placaVehiculo):
     ).first()    
 
     return buscarPlaca    
+
+#########################################################
+def insert_administrador(user_id):
+    admin = db.session.query(Administrador).get(user_id)
+    db.session.commit()
+    
+    if admin == None:
+        admin = Administrador(user_id)
+        db.session.add(admin)
+        db.session.commit()
+        return True
+    
+    return False
 
 #########################################################
 def get_fallback_message (text):
