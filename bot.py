@@ -58,11 +58,13 @@ def on_reg_vehicle(message):
         placa = parts.group(2)
         tipo = float (parts.group(3))
 
+        placaVehiculo = placa.upper()
+
         idUsuario = message.from_user.id
 
         tipoVehiculo = None
           
-        obtenerPlaca = logic.get_placa (placa)
+        obtenerPlaca = logic.get_placa (placaVehiculo)
         
         if  not obtenerPlaca:              
 
@@ -76,34 +78,35 @@ def on_reg_vehicle(message):
                 bot.reply_to(message, f"🚨 Error, tipo de registro inválido: {tipo} Digite 1 para Carro ó 2 para Moto")
                 return 
 
-            control = logic.add_vehiculo (tipoVehiculo, placa, idUsuario)
+            control = logic.add_vehiculo (tipoVehiculo, placaVehiculo, idUsuario)
 
             bot.reply_to(
                 message,
-                f"🚗 Vehículo Registrado con Placa:  {placa}" if control == True
+                f"🚗 Vehículo Registrado con Placa:  {placaVehiculo}" if control == True
                 else "🙈 Tuve problemas registrando el Vehiculo, ejecuta /start y vuelve a intentarlo") 
         else: 
-            bot.reply_to(message, f"🚨 El Vehículo con placa {placa} ya se encuentra registrado.")
+            bot.reply_to(message, f"🚨 El Vehículo con placa {placaVehiculo} ya se encuentra registrado.")
     except:
             bot.reply_to(message, f"💩 Tuve problemas agregando el Vehiculo, ejecuta /start valida tus datos y vuelve a intentarlo")
-
+			
 #########################################################  
 # Listar Vehículos
 @bot.message_handler(regexp=r"^(listar vehiculos|lsv)$")
 def on_list_vehiculos(message):
-	bot.send_chat_action(message.chat.id, 'typing')
+    bot.send_chat_action(message.chat.id, 'typing')
 
-	text = ""	
-	vehiculos = logic.list_vehiculos()
+    text = ""
+    vehiculos = logic.list_vehiculos()
 
-	text = "``` Listado de vehiculos:\n\n"
+    if vehiculos:
+        text = "``` Listado de vehiculos:\n\n"
 
-	for vehiculo in vehiculos:
-		text += f"| Tipo:  {vehiculo.tipo_vehiculo} | Placa: {vehiculo.placa} | ID: {vehiculo.id_vehiculo}|\n"
-
-	text += "```"
-	
-	bot.reply_to(message, text, parse_mode="Markdown")
+        for vehiculo in vehiculos:
+            text += f"| Tipo:  {vehiculo.tipo_vehiculo} | Placa: {vehiculo.placa} | ID: {vehiculo.id_vehiculo}|\n"
+        text += "```"
+    else:
+        text = f"🚨 Aún no se encuentran vehículos registrados"
+    bot.reply_to(message, text, parse_mode="Markdown")    
     
 #########################################################     
 # Eliminar Vehiculo
@@ -249,23 +252,27 @@ def on_in_vehiculo(message):
         zonaVehiculo = parts.group(3)
 
         obtenerPlaca = logic.get_placa (placaVehiculo)
-        
-        if  not obtenerPlaca:  
-            bot.reply_to(message, f"🚨 El vehículo con placa {placaVehiculo} no se encuentra registrado")
+        zona = logic.get_IdZona(zonaVehiculo)
+
+        if zona:
+            if  not obtenerPlaca:  
+                bot.reply_to(message, f"🚨 El vehículo con placa {placaVehiculo} no se encuentra registrado")
+            else:
+                disponibilidad = logic.get_disponibilidad_zona(zonaVehiculo)
+
+                estado = float(0); 
+
+                if disponibilidad == True:
+                    control = logic.ingresar_vehiculo(message.from_user.id, placaVehiculo, zonaVehiculo)
+                    logic.update_dispo_zona(zonaVehiculo, estado)
+                    bot.reply_to(
+                    message,
+                    f"🚗 Vehículo Ingrezado a la Zona:  {zonaVehiculo}" if control == True
+                    else "🙈 Tuve problemas ingresando el Vehiculo, ejecuta /start y vuelve a intentarlo") 
+                else:    
+                    bot.reply_to(message, f"⚠️ Zona: {zonaVehiculo} no se encuentra disponible")
         else:
-            disponibilidad = logic.get_disponibilidad_zona(zonaVehiculo)
-
-            estado = float(0)
-
-            if disponibilidad == True:
-                control = logic.ingresar_vehiculo(message.from_user.id, placaVehiculo, zonaVehiculo)
-                logic.update_dispo_zona(zonaVehiculo, estado)
-                bot.reply_to(
-                message,
-                f"🚗 Vehículo Ingrezado a la Zona:  {zonaVehiculo}" if control == True
-                else "🙈 Tuve problemas ingresando el Vehiculo, ejecuta /start y vuelve a intentarlo") 
-            else:    
-                bot.reply_to(message, f"⚠️ Zona: {zonaVehiculo} no se encuentra disponible") 
+            bot.reply_to(message, f"⚠️ Zona: {zonaVehiculo} no se encuentra registrada")
     except:
             bot.reply_to(message, f"💩 Tuve problemas ingresando el Vehiculo, valida la zona y placa, ejecuta /start y vuelve a intentarlo")
 
