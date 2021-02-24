@@ -325,16 +325,20 @@ def on_get_zone(message):
     bot.send_chat_action(message.chat.id, 'typing')
     parts = re.match(r"(^)ubicar vehiculo|ubicar|ubv placa ([a-zA-Z0-9_ ]*)",message.text,re.IGNORECASE)
     
-    try:
+    try:        
         placa_vehiculo=(parts.group(2)).upper()
         obtenerPlaca = logic.get_placa(placa_vehiculo)
 
         if not obtenerPlaca:
             bot.reply_to(message, f"🚨 El vehículo con placa {placa_vehiculo} no se encuentra registrado")
-        else:            
+        else:
             zona = logic.get_zona(placa_vehiculo)
-            text = text = f"🚖La zona en que se encuentra ubicado el vehiculo con placa {placa_vehiculo} es:\n\n"+zona
-            bot.reply_to(message, text, parse_mode="Markdown")
+            disponibilidad = logic.get_disponibilidad_zona(zona)
+            if disponibilidad == True:
+                text = f"🚨El vehiculo con placa {placa_vehiculo} ya NO se encuentra ocupando zona del parqueadero\n\n"
+            else:
+                text = f"🚖La zona en que se encuentra ubicado el vehiculo con placa {placa_vehiculo} es:\n\n"+zona                
+            bot.reply_to(message, text, parse_mode="Markdown")                
     except:
         bot.reply_to(message, f"💩 Tuve problemas buscando el Vehiculo, ejecuta /start y vuelve a intentarlo")
 
