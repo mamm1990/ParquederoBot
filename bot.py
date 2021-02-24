@@ -81,8 +81,8 @@ def on_reg_vehicle(message):
         else: 
             bot.reply_to(message, f"🚨 El Vehículo con placa {placaVehiculo} ya se encuentra registrado.")
     except:
-            #bot.reply_to(message, f"💩 Tuve problemas agregando el Vehiculo, ejecuta /start valida tus datos y vuelve a intentarlo")
-            bot.reply_to(message, sys.exc_info()[0])
+            bot.reply_to(message, f"💩 Tuve problemas agregando el Vehiculo, ejecuta /start valida tus datos y vuelve a intentarlo")
+            #bot.reply_to(message, sys.exc_info()[0])
 			
 #########################################################  
 # Listar Vehículos
