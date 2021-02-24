@@ -138,8 +138,8 @@ def on_reg_zona(message):
     parts = re.match(r"(^)agregar zona|agz zona ([a-zA-Z0-9_ ]*)($)", message.text, re.IGNORECASE)
     
     try:
-        id_zona = parts.group(2)
-                
+        id_zona = parts.group(2).upper()
+        
         text=""
 
         if logic.check_admin(message.from_user.id): 
