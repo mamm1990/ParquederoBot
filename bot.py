@@ -131,16 +131,15 @@ def on_remove_vehiculo(message):
 
 #########################################################
 #Agregar Zona de Parqueo
-@bot.message_handler(regexp=r"(^)agregar zona|agz zona ([a-zA-Z0-9_ ]*) disponibilidad ([0-9]{1,})($)")
+@bot.message_handler(regexp=r"(^)agregar zona|agz zona ([a-zA-Z0-9_ ]*)($)")
 def on_reg_zona(message):
     bot.send_chat_action(message.chat.id, 'typing')	
         
-    parts = re.match(r"(^)agregar zona|agz zona ([a-zA-Z0-9_ ]*) disponibilidad ([0-9]{1,})($)", message.text, re.IGNORECASE)
+    parts = re.match(r"(^)agregar zona|agz zona ([a-zA-Z0-9_ ]*)($)", message.text, re.IGNORECASE)
     
     try:
         id_zona = parts.group(2)
-        disponibilidad_zona = int (parts.group(3)) 
-        
+                
         text=""
 
         if logic.check_admin(message.from_user.id): 
@@ -149,16 +148,14 @@ def on_reg_zona(message):
             if not obtenerZona:
 			    #Ejemplo: agz zona ZN02 disponibilidad 1
                 
-                if disponibilidad_zona not in [0, 1]:
-                    text = f"Error, disponibiliad de la zona inválido: {disponibilidad_zona} Digite 1 para disponible ó 0 para no disponible"
+                disponibilidad_zona = 1
                 
-                else:
-                    control = logic.add_zona (id_zona, disponibilidad_zona)
+                control = logic.add_zona (id_zona, disponibilidad_zona)
                     
-                    if control == True :
-                        text = f"🌳 Zona Registrada con identificacion:  {id_zona}"
-                    else:
-                        text = f"😔 Tuve problemas registrando la zona, ejecuta /start y vuelve a intentarlo"
+                if control == True :
+                    text = f"🌳 Zona Registrada con identificacion:  {id_zona}"
+                else:
+                    text = f"😔 Tuve problemas registrando la zona, ejecuta /start y vuelve a intentarlo"
             else:
                 text = f"🚨 La zona con identificación {id_zona} ya se encuentra registrada."
         else:
@@ -351,6 +348,25 @@ def on_reg_ultTiquete(message):
         bot.reply_to(message, text, parse_mode="Markdown")
     except:
         bot.reply_to(message, f"💩 Tuve problemas consultando la información, ejecuta /start valida tus datos y vuelve a intentarlo")
+
+######################################################### 
+#Ingresar administradores
+@bot.message_handler(regexp=r"(^)insertar admin|ia ([a-zA-Z0-9_ ]*)")
+def on_insert_admin(message):
+    bot.send_chat_action(message.chat.id, 'typing')
+    parts = re.match(r"(^)insertar admin|ia ([a-zA-Z0-9_ ]*)",message.text,re.IGNORECASE)
+
+    try:
+        id_user=parts.group(2)
+        resultado = logic.insert_administrador(id_user)
+
+        if resultado:
+            bot.reply_to(message, f"🚨 Nuevo Administrador registrado correctamente.")
+        else:            
+            text = "El administrador no fue registrado. Ya Existe.\n\n"
+            bot.reply_to(message, text, parse_mode="Markdown")
+    except:
+        bot.reply_to(message, f"💩 Tuve problemas insertando el nuevo administrador.")
 
 #########################################################
 # Default cuando se ingresa un valor invalido:

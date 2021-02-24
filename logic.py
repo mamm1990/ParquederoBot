@@ -68,7 +68,7 @@ def get_help_message ():
     "*/start* - Inicia la interacción con el bot (obligatorio)\n"
     "*/help* - Muestra este mensaje de ayuda\n"
     "*/about* - Muestra detalles de esta aplicación\n"
-    "*agregar zona|agz zona {idzona} disponibilidad {disponible}* (0. No Disponible, 1 Disponible)- Agregar Nueva Zona (sólo admin)\n"
+    "*agregar zona|agz zona {idzona}* - Agregar Nueva Zona (sólo admin)\n"
     "*listar zonas|lsz* - Listar Zonas Agregadas (sólo admin)\n"
     "*remover zona|rmz zona {idzona}* - Remover Zona (sólo admin)\n"
     "*agregar vehiculo|agv placa {placa} , tipo {tipo}* (Tipos Vehículo: 1. Carro, 2. Moto)- Agregar Vehículo\n"
