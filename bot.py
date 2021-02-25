@@ -208,29 +208,25 @@ def on_list_zona(message):
     text = ""
     zona_disponible = ""
         
-    if logic.check_admin(message.from_user.id):
-        Zonas = logic.list_zonas()
+    Zonas = logic.list_zonas()
 
-        if Zonas:
-            text = "``` Listado de zonas de parqueo:\n\n"
+    if Zonas:
+        text = "``` Listado de zonas de parqueo:\n\n"
             
-            for Zona in Zonas:
+        for Zona in Zonas:
 
-                disponibilidad = Zona.disponible
+            disponibilidad = Zona.disponible
 
-                if disponibilidad == 1 : 
-                   zona_disponible = 'Disponible'
-                if disponibilidad == 0 : 
-                    zona_disponible = 'No Disponible'
+            if disponibilidad == 1 : 
+                zona_disponible = 'Disponible'
+            if disponibilidad == 0 : 
+                zona_disponible = 'No Disponible'
                                 
-                text += f"| Zona:  {Zona.id_zona}: {zona_disponible} |\n"
+            text += f"| Zona:  {Zona.id_zona}: {zona_disponible} |\n"
             
-            text += "```"
-        else:
-            text = f"🚨 Aún no se encuentran zonas registradas"
-        
+        text += "```"
     else:
-        text = f"🥺 Esta funcionalidad sólo está disponible para administradores"
+        text = f"🚨 Aún no se encuentran zonas registradas"
         
     bot.reply_to(message, text, parse_mode="Markdown")
 
@@ -261,7 +257,7 @@ def on_in_vehiculo(message):
             else:
                 disponibilidad = logic.get_disponibilidad_zona(zonaVehiculo)
 
-                estado = float(0); 
+                estado = float(0)
 
                 if disponibilidad == True:
                     zonaParqueo = logic.get_parking(placaVehiculo, idUsuario)        

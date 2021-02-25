@@ -69,7 +69,7 @@ def get_help_message ():
     "*/help* - Muestra este mensaje de ayuda\n"
     "*/about* - Muestra detalles de esta aplicación\n"
     "*agregar zona|agz zona {idzona}* - Agregar Nueva Zona (sólo admin)\n"
-    "*listar zonas|lsz* - Listar Zonas Agregadas (sólo admin)\n"
+    "*listar zonas|lsz* - Listar Zonas Agregadas\n"
     "*remover zona|rmz zona {idzona}* - Remover Zona (sólo admin)\n"
     "*agregar vehiculo|agv placa {placa} tipo {tipo}* (Tipos Vehículo: 1. Carro, 2. Moto)- Agregar Vehículo\n"
     "*listar vehiculos|lsv* - Listar Vehículos\n"
