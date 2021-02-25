@@ -377,14 +377,19 @@ def on_insert_admin(message):
     parts = re.match(r"(^)insertar admin|ia ([a-zA-Z0-9_ ]*)",message.text,re.IGNORECASE)
 
     try:
-        id_user=parts.group(2)
-        resultado = logic.insert_administrador(id_user)
+        if logic.check_admin(message.from_user.id):
 
-        if resultado:
-            bot.reply_to(message, f"🚨 Nuevo Administrador registrado correctamente.")
-        else:            
-            text = "El administrador no fue registrado. Ya Existe.\n\n"
-            bot.reply_to(message, text, parse_mode="Markdown")
+            id_user=parts.group(2)
+            resultado = logic.insert_administrador(id_user)
+
+            if resultado:
+                bot.reply_to(message, f"🚨 Nuevo Administrador registrado correctamente.")
+            else:            
+                text = "El administrador no fue registrado. Ya Existe.\n\n"
+                bot.reply_to(message, text, parse_mode="Markdown")
+        else:
+            text = f"🥺 Esta funcionalidad sólo está disponible para administradores"
+            bot.reply_to(message, text, parse_mode="Markdown")        
     except:
         bot.reply_to(message, f"💩 Tuve problemas insertando el nuevo administrador.")
 
