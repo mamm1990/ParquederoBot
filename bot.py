@@ -349,7 +349,7 @@ def on_reg_ultTiquete(message):
     text = ""
     
     try:
-        placa = parts.group(2)
+        placa = parts.group(2).upper()
         idUsuario = message.from_user.id
         
         ultParqueo = logic.get_fecha_ultimoParqueo (idUsuario,placa)
