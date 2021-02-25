@@ -261,7 +261,7 @@ def on_in_vehiculo(message):
             else:
                 disponibilidad = logic.get_disponibilidad_zona(zonaVehiculo)
 
-                estado = float(0); 
+                estado = float(0)
 
                 if disponibilidad == True:
                     zonaParqueo = logic.get_parking(placaVehiculo, idUsuario)        
